@@ -1,9 +1,11 @@
 import customtkinter as ctk
+import pyperclip as pc
 
 from encoder import encode
 from decoder import decode
 
-"""
+""" cli version:
+
 menu = input(f"Voulez-vous (entrer le numéro): \n"
 "1. Encoder \n"
 "2. Décoder\n")
@@ -17,7 +19,6 @@ else:
 
 """
 
-
 # <--- UI --->
 
 class App(ctk.CTk):
@@ -26,6 +27,7 @@ class App(ctk.CTk):
 
         self.title("Morse decoder")
         self.geometry("625x425")
+        ctk.set_appearance_mode("dark")
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -68,8 +70,10 @@ class App(ctk.CTk):
         self.confirmEncode = ctk.CTkButton(self.main_frame, text="Confirmer", command=self.encoder, width=300, height=50)
         self.confirmEncode.pack(pady=10)
 
-        self.resultEncode = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=18))
+        self.resultEncode = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=18), wraplength=350)
         self.resultEncode.pack(pady=10)
+
+        self.copyEncode = ctk.CTkButton(self.main_frame, text="Copier le résultat", command=self.copierEnc, width=300, height=50)
 
     def afficherDecode(self):
         self.nettoyer_main_frame()
@@ -83,22 +87,34 @@ class App(ctk.CTk):
         self.confirmDecode = ctk.CTkButton(self.main_frame, text="Confirmer", command=self.decoder, width=300, height=50)
         self.confirmDecode.pack(pady=10)
 
-        self.resultDecode = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=18))
+        self.resultDecode = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=18), wraplength=350)
         self.resultDecode.pack(pady=10)
+
+        self.copyDecode = ctk.CTkButton(self.main_frame, text="Copier le résultat", command=self.copierDec, width=300, height=50)
 
     def encoder(self):
         inputValue = self.encodeInput.get()
-        result = encode(inputValue)
+        self.resultEnc = encode(inputValue)
 
-        self.resultEncode.configure(text=result)
+        self.resultEncode.configure(text=self.resultEnc)
+        self.copyEncode.pack(pady=10)
     
     def decoder(self):
         inputValue = self.decodeInput.get()
-        result = decode(inputValue)
+        self.resultDec = decode(inputValue)
 
-        self.resultDecode.configure(text=result)
+        self.resultDecode.configure(text=self.resultDec)
+        self.copyDecode.pack(pady=10)
+
+    def copierEnc(self):
+        pc.copy(self.resultEnc)
+
+        self.copyEncode.configure(text="Copié !")
+
+    def copierDec(self):
+        pc.copy(self.resultDec)
+
+        self.copyDecode.configure(text="Copié !")
 
 app = App()
 app.mainloop()
-
-... .- .-.. ..- - / .--- . / -- .- .--. .--. . .-.. .-.. . / -. .- - .... .- -. / . - / .--- . / -.-. --- -.. . / ..- -. / .--. .-. --- --. .-. .- -- -- . / --.- ..- .. / - .-. .- -.. ..- .. - / .-.. . / -- --- .-. ... .
